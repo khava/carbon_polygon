@@ -101,7 +101,6 @@
             mesh.position.set(x, y, z);
             mesh.name = name;
             scene.add(mesh);
-            // return mesh
         };
 
 
@@ -128,17 +127,30 @@
                     button1Modal.show()
                 }
                 if (intersect[0].object.name === 'button2') {
-                    alert('Clicked ' + intersect[0].object.name)
+                    let button1Modal = new bootstrap.Modal(document.getElementById('button2Modal'), {
+                        keyboard: false
+                    });
+                    button1Modal.show()
                 }
                 if (intersect[0].object.name === 'button3') {
-                    alert('Clicked ' + intersect[0].object.name)
+                    let button1Modal = new bootstrap.Modal(document.getElementById('button3Modal'), {
+                        keyboard: false
+                    });
+                    button1Modal.show()
                 }
                 if (intersect[0].object.name === 'button4') {
-                    alert('Clicked ' + intersect[0].object.name)
+                    let button1Modal = new bootstrap.Modal(document.getElementById('button4Modal'), {
+                        keyboard: false
+                    });
+                    button1Modal.show()
                 }
                 if (intersect[0].object.name === 'button5') {
-                    alert('Clicked ' + intersect[0].object.name)
+                    let button1Modal = new bootstrap.Modal(document.getElementById('button5Modal'), {
+                        keyboard: false
+                    });
+                    button1Modal.show()
                 }
+                console.log(intersect[0].object.name)
             } catch {
                 console.log(intersect)
             }
