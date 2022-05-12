@@ -106,7 +106,7 @@
         let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
 
-        function onMouseClick( event ) {
+        function onClick(event) {
             raycaster.setFromCamera(mouse, camera);
             let intersect = raycaster.intersectObjects(scene.children);
                 
@@ -147,13 +147,14 @@
             }
         }
 
-        function onMouseMove( event ) {
+        function onMouseMove(event) {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
         }
 
-        window.addEventListener( 'click', onMouseClick, false );
-        window.addEventListener( 'mousemove', onMouseMove, false );
+        window.addEventListener('click', onClick, false);
+        window.addEventListener('touchstart', onClick, false);
+        window.addEventListener('mousemove', onMouseMove, false);
 
     </script>
 {% endblock %}
