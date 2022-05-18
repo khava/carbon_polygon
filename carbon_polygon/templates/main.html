@@ -1,160 +1,231 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Карбоновый полигон</title>
 
-{% block content %}
+        <link rel="stylesheet" href="../../static/css/style.css">
 
-    <div id="scene"></div>
-    {% include "modals.html" %}
-    
-    <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/examples/js/renderers/CSS3DRenderer.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
 
-    <script>
-        let scene, camera, renderer, renderer2;
+        <!-- <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/build/three.min.js"></script> -->
+        <script src="https://threejs.org/build/three.js"></script>
+        <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
+        <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
 
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x8EFF4E);
+    </head>
 
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 5000);
-        camera.position.set(-292, 708, 265);
-        camera.lookAt(scene.position);
+    <body>
 
-        renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.toneMappingExposure = 2;
-        document.querySelector('#scene').appendChild(renderer.domElement);
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Карбоновый полигон</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">О команде</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">О проекте</a>
+                    </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <div id="scene"></div>
+        {% include "modals.html" %}
 
-        window.addEventListener('resize', () => {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.aspect = window.innerWidth/window.innerHeight;
-        });
+        <script>
+            function init() {
+                const container = document.querySelector("#scene");
 
+                const scene = new THREE.Scene();
+                scene.background = new THREE.Color(0x74E140);
 
-        let controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.maxPolarAngle = 1.2;
-        controls.update();
-
-
-        let loader = new THREE.GLTFLoader();
-        loader.load('../../static/3d_model/scene.glb', (gltf) => {
-            let mroot = gltf.scene;
-            let bbox = new THREE.Box3().setFromObject(mroot);
-            let cent = bbox.getCenter(new THREE.Vector3());
-            let size = bbox.getSize(new THREE.Vector3());
-
-            //Rescale the object to normalized space
-            let maxAxis = Math.max(size.x, size.y, size.z);
-            mroot.scale.multiplyScalar(900.0 / maxAxis);
-            bbox.setFromObject(mroot);
-            bbox.getCenter(cent);
-            bbox.getSize(size);
-
-            //Reposition to 0,halfY,0
-            mroot.position.copy(cent).multiplyScalar(-1);
-            mroot.position.y-= (size.y * 0.5);
-
-            // light
-            let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.3);
-            scene.add(ambientLight);
-
-            let dirLight = new THREE.DirectionalLight(0xFFFFFF, 0.8);
-            dirLight.position.set(10, 4000, 100);
-            scene.add(dirLight);
-
-            scene.add(gltf.scene);
-            animate();
-        })
-
-
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        }
-        animate();
-
-
-        function makeButton(name, x, y, z) {
-            let width = 9;
-            let height = 9;
-
-            let geometry = new THREE.CircleGeometry(width, height);
-            geometry.rotateX(30);
-
-            let material = new THREE.MeshPhongMaterial({
-                opacity	: 0.15,
-                color	: new THREE.Color(0xFF0000),
-                blending: THREE.NoBlending,
-                side	: THREE.DoubleSide,
-            });
-
-            let mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(x, y, z);
-            mesh.name = name;
-            scene.add(mesh);
-        };
-
-
-        // buttons
-        let button1 = makeButton('button1', 29, -70, -172);
-        let button2 = makeButton('button2', 70, -60, -230);
-        let button3 = makeButton('button3', 90, -70, 5);
-        let button4 = makeButton('button4', -35, -70, -120);
-        let button5 = makeButton('button5', -35, -70, 3);
-
-
-        let raycaster = new THREE.Raycaster();
-        let mouse = new THREE.Vector2();
-
-        function onClick(event) {
-            raycaster.setFromCamera(mouse, camera);
-            let intersect = raycaster.intersectObjects(scene.children);
+                const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 5000);
+                camera.position.set(-292, 708, 265);
+                camera.lookAt(scene.position);
                 
-            try {
-                if (intersect[0].object.name === 'button1') {
-                    let button1Modal = new bootstrap.Modal(document.getElementById('button1Modal'), {
-                        keyboard: false
-                    });
-                    button1Modal.show()
-                }
-                if (intersect[0].object.name === 'button2') {
-                    let button1Modal = new bootstrap.Modal(document.getElementById('button2Modal'), {
-                        keyboard: false
-                    });
-                    button1Modal.show()
-                }
-                if (intersect[0].object.name === 'button3') {
-                    let button1Modal = new bootstrap.Modal(document.getElementById('button3Modal'), {
-                        keyboard: false
-                    });
-                    button1Modal.show()
-                }
-                if (intersect[0].object.name === 'button4') {
-                    let button1Modal = new bootstrap.Modal(document.getElementById('button4Modal'), {
-                        keyboard: false
-                    });
-                    button1Modal.show()
-                }
-                if (intersect[0].object.name === 'button5') {
-                    let button1Modal = new bootstrap.Modal(document.getElementById('button5Modal'), {
-                        keyboard: false
-                    });
-                    button1Modal.show()
-                }
+                const controls = new THREE.OrbitControls(camera, container);
+                controls.maxPolarAngle = 1.2;
+                controls.update();
 
-            } catch {
-                console.log(intersect)
+                const lights = createLights();
+                const buttons = createButtons();
+
+                scene.add(
+                    lights.ambient,
+                    lights.dirLight,
+                    ...buttons
+                );
+
+                const renderer = createRenderer(container);
+
+                setupOnWindowResize(camera, container, renderer);
+
+                renderer.setAnimationLoop(() => {
+                    renderer.render(scene, camera);
+                });
+
+                let loader = new THREE.GLTFLoader();
+                loader.load('../../static/3d_model/scene.glb', (gltf) => {
+                    let mroot = gltf.scene;
+                    let bbox = new THREE.Box3().setFromObject(mroot);
+                    let cent = bbox.getCenter(new THREE.Vector3());
+                    let size = bbox.getSize(new THREE.Vector3());
+
+                    // Rescale the object to normalized space
+                    let maxAxis = Math.max(size.x, size.y, size.z);
+                    mroot.scale.multiplyScalar(900.0 / maxAxis);
+                    bbox.setFromObject(mroot);
+                    bbox.getCenter(cent);
+                    bbox.getSize(size);
+
+                    //Reposition to 0,halfY,0
+                    mroot.position.copy(cent).multiplyScalar(-1);
+                    mroot.position.y-= (size.y * 0.5); 
+                    scene.add(gltf.scene);
+
+                });
+
+                setupSelectAndZoom(camera, container, controls, buttons, renderer);
             }
-        }
 
-        function onMouseMove(event) {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-        }
 
-        window.addEventListener('click', onClick, false);
-        window.addEventListener('touchstart', onClick, false);
-        window.addEventListener('mousemove', onMouseMove, false);
+            function makeButton(name, x, y, z) {
+                let width = 9;
+                let height = 9;
 
-    </script>
-{% endblock %}
+                let geometry = new THREE.CircleGeometry(width, height);
+                geometry.rotateX(30);
+
+                let material = new THREE.MeshPhongMaterial({
+                    opacity: 5,
+                    color: new THREE.Color(0xFF0000),
+                    blending: THREE.NoBlending,
+                    side: THREE.DoubleSide,
+                });
+
+                let mesh = new THREE.Mesh(geometry, material);
+                mesh.position.set(x, y, z);
+                mesh.name = name;
+                return mesh;
+            };
+
+            function createButtons() {
+                let buttons = [];
+
+                buttons.push(makeButton('button1', 29, -70, -172));
+                buttons.push(makeButton('button2', 70, -60, -230));
+                buttons.push(makeButton('button3', 90, -70, 5));
+                buttons.push(makeButton('button4', -35, -70, -120));
+                buttons.push(makeButton('button5', -35, -70, 3));
+
+                return buttons
+            };
+
+            function createLights() {
+                const ambient = new THREE.AmbientLight(0xFFFFFF, 1);
+
+                const dirLight = new THREE.DirectionalLight(0xFFFFFF, 0.8);
+                dirLight.position.set(10, 4000, 100);
+
+                return {ambient, dirLight};
+            };
+
+            function createRenderer(container) {
+                const renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.toneMappingExposure = 2;
+                container.appendChild(renderer.domElement);
+
+                return renderer;
+            };
+
+            function setupOnWindowResize(camera, container, renderer) {
+                window.addEventListener("resize", () => {
+                    camera.aspect = window.innerWidth/window.innerHeight;
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            }
+
+            init();
+
+            function setupSelectAndZoom(camera, container, controls, buttons, renderer) {
+                const selection = [];
+
+                let isDragging = false;
+                const mouse = new THREE.Vector2();
+                const raycaster = new THREE.Raycaster();
+
+                container.addEventListener("mousedown", () => { isDragging = false; }, false);
+                container.addEventListener("mousemove", () => { isDragging = true; }, false);
+
+                window.addEventListener("mouseup", (event) => {
+                    if (isDragging) {
+                        isDragging = false;
+                        return;
+                    }
+
+                    isDragging = false;
+
+                    let rect = renderer.domElement.getBoundingClientRect();
+
+                    mouse.x = ((event.clientX - rect.left) / (rect.width - rect.left)) * 2 - 1;
+                    mouse.y = - ((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+                    raycaster.setFromCamera(mouse, camera);
+
+                    const intersects = raycaster.intersectObjects(buttons);
+
+                        if (intersects.length > 0) {
+                            console.log(intersects[0].object.name)
+                            
+                            if (intersects[0].object.name === 'button1') {
+                                let button1Modal = new bootstrap.Modal(document.getElementById('button1Modal'), {
+                                    keyboard: false
+                                });
+                                button1Modal.show()
+                            }
+                            if (intersects[0].object.name === 'button2') {
+                                let button1Modal = new bootstrap.Modal(document.getElementById('button2Modal'), {
+                                    keyboard: false
+                                });
+                                button1Modal.show()
+                            }
+                            if (intersects[0].object.name === 'button3') {
+                                let button1Modal = new bootstrap.Modal(document.getElementById('button3Modal'), {
+                                    keyboard: false
+                                });
+                                button1Modal.show()
+                            }
+                            if (intersects[0].object.name === 'button4') {
+                                let button1Modal = new bootstrap.Modal(document.getElementById('button4Modal'), {
+                                    keyboard: false
+                                });
+                                button1Modal.show()
+                            }
+                            if (intersects[0].object.name === 'button5') {
+                                let button1Modal = new bootstrap.Modal(document.getElementById('button5Modal'), {
+                                    keyboard: false
+                                });
+                                button1Modal.show()
+                            }
+
+                        }
+
+                    }, false
+                );
+            };
+
+        </script>
+    </body>
+</html>
