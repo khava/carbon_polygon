@@ -65,34 +65,53 @@
         setupSelectAndZoom(camera, container, controls, buttons, renderer);
     };
 
-    function makeButton(name, x, y, z) {
+    function makeButton(name, x, y, z, rotateY=0) {
         let width = 9;
         let height = 9;
 
+        let texture = new THREE.TextureLoader().load('../../static/img/icon.jpg');
+
         let geometry = new THREE.CircleGeometry(width, height);
         geometry.rotateX(30);
+        geometry.rotateY(rotateY);
 
         let material = new THREE.MeshPhongMaterial({
             opacity: 5,
-            color: new THREE.Color(0xFF0000),
+            // color: new THREE.Color(0xFF0000),
             blending: THREE.NoBlending,
             side: THREE.DoubleSide,
+            map: texture
         });
 
         let mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(x, y, z);
         mesh.name = name;
         return mesh;
+
+        // let geometry = new THREE.CircleGeometry(width, height);
+        // geometry.rotateX(30);
+
+        // let material = new THREE.MeshPhongMaterial({
+        //     opacity: 5,
+        //     color: new THREE.Color(0xFF0000),
+        //     blending: THREE.NoBlending,
+        //     side: THREE.DoubleSide,
+        // });
+
+        // let mesh = new THREE.Mesh(geometry, material);
+        // mesh.position.set(x, y, z);
+        // mesh.name = name;
+        // return mesh;
     };
 
     function createButtons() {
         let buttons = [];
 
-        buttons.push(makeButton('button1', 29, -70, -172));
+        buttons.push(makeButton('button1', 29, -70, -172, 30));
         buttons.push(makeButton('button2', 70, -60, -230));
-        buttons.push(makeButton('button3', 90, -70, 5));
-        buttons.push(makeButton('button4', -35, -70, -120));
-        buttons.push(makeButton('button5', -35, -70, 3));
+        buttons.push(makeButton('button3', 90, -70, 5, 30));
+        buttons.push(makeButton('button4', -35, -70, -120, 30));
+        buttons.push(makeButton('button5', -35, -70, 3, 30));
 
         return buttons
     };
