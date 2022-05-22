@@ -14,7 +14,7 @@
         const container = document.querySelector("#scene");
 
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x74E140);
+        scene.background = new THREE.Color(0x274717);
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 5000);
         camera.position.set(-292, 708, 265);
@@ -42,7 +42,7 @@
         });
 
         let loader = new THREE.GLTFLoader();
-        loader.load('../../static/3d_model/scene.glb', (gltf) => {
+        loader.load('../../static/3d_model/scene2.glb', (gltf) => {
             let mroot = gltf.scene;
             let bbox = new THREE.Box3().setFromObject(mroot);
             let cent = bbox.getCenter(new THREE.Vector3());
@@ -107,11 +107,11 @@
     function createButtons() {
         let buttons = [];
 
-        buttons.push(makeButton('button1', 29, -70, -172, 30));
-        buttons.push(makeButton('button2', 70, -60, -230));
-        buttons.push(makeButton('button3', 90, -70, 5, 30));
-        buttons.push(makeButton('button4', -35, -70, -120, 30));
-        buttons.push(makeButton('button5', -35, -70, 3, 30));
+        buttons.push(makeButton('button1', 29, -70, -122, 30));
+        buttons.push(makeButton('button2', 70, -60, -180));
+        buttons.push(makeButton('button3', 90, -70, 55, 30));
+        buttons.push(makeButton('button4', -35, -70, -68, 30));
+        buttons.push(makeButton('button5', -35, -70, 50, 30));
 
         return buttons
     };
