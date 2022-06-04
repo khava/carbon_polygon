@@ -10,6 +10,9 @@
 {% include "modals.html" %}
 
 <script>
+    let animator1, animator2, animator3, animator4, animator5;
+    let clock = new THREE.Clock();
+
     function init() {
         const container = document.querySelector("#scene");
 
@@ -27,10 +30,18 @@
         const lights = createLights();
         const buttons = createButtons();
 
+        const buttonsMesh = buttons.map((item => {
+            return item.mesh
+        }));
+
+        [animator1, animator2, animator3, animator4, animator5] = buttons.map((item => {
+            return item.animator
+        }));
+
         scene.add(
             lights.ambient,
             lights.dirLight,
-            ...buttons
+            ...buttonsMesh
         );
 
         const renderer = createRenderer(container);
@@ -62,14 +73,26 @@
 
         });
 
-        setupSelectAndZoom(camera, container, controls, buttons, renderer);
+        setupSelectAndZoom(camera, container, controls, buttonsMesh, renderer);
+    };
+
+    function animate() {
+        requestAnimationFrame(animate);
+        let delta = clock.getDelta(); 
+        animator1.update(300 * delta);
+        animator2.update(300 * delta);
+        animator3.update(300 * delta);
+        animator4.update(300 * delta);
+        animator5.update(300 * delta);
+
     };
 
     function makeButton(name, x, y, z, rotateY=0) {
-        let width = 9;
-        let height = 9;
+        let width = 15;
+        let height = 15;
 
-        let texture = new THREE.TextureLoader().load('../../static/img/icon.jpg');
+        let texture = new THREE.TextureLoader().load('../../static/img/dot.png');
+        let animator = new TextureAnimator(texture, 8, 1, 8, 75);
 
         let geometry = new THREE.CircleGeometry(width, height);
         geometry.rotateX(30);
@@ -80,29 +103,45 @@
             // color: new THREE.Color(0xFF0000),
             blending: THREE.NoBlending,
             side: THREE.DoubleSide,
-            map: texture
+            map: texture,
+            alphaTest: 0.5
         });
 
         let mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(x, y, z);
         mesh.name = name;
-        return mesh;
 
-        // let geometry = new THREE.CircleGeometry(width, height);
-        // geometry.rotateX(30);
-
-        // let material = new THREE.MeshPhongMaterial({
-        //     opacity: 5,
-        //     color: new THREE.Color(0xFF0000),
-        //     blending: THREE.NoBlending,
-        //     side: THREE.DoubleSide,
-        // });
-
-        // let mesh = new THREE.Mesh(geometry, material);
-        // mesh.position.set(x, y, z);
-        // mesh.name = name;
-        // return mesh;
+        return {'animator': animator, 'mesh': mesh};
     };
+
+    function TextureAnimator(texture, tilesHoriz, tilesVert, numTiles, tileDispDuration) {	
+            
+        this.tilesHorizontal = tilesHoriz;
+        this.tilesVertical = tilesVert;
+        this.numberOfTiles = numTiles;
+
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping; 
+        texture.repeat.set( 1 / this.tilesHorizontal, 1 / this.tilesVertical );
+
+        this.tileDisplayDuration = tileDispDuration;
+        this.currentDisplayTime = 0;
+        this.currentTile = 0;
+            
+        this.update = function(milliSec) {
+            this.currentDisplayTime += milliSec;
+            while (this.currentDisplayTime > this.tileDisplayDuration) {
+                this.currentDisplayTime -= this.tileDisplayDuration;
+                this.currentTile++;
+                if (this.currentTile == this.numberOfTiles)
+                    this.currentTile = 0;
+
+                let currentColumn = this.currentTile % this.tilesHorizontal;
+                texture.offset.x = currentColumn / this.tilesHorizontal;
+                let currentRow = Math.floor( this.currentTile / this.tilesHorizontal );
+                texture.offset.y = currentRow / this.tilesVertical;
+            }
+        };
+    }	
 
     function createButtons() {
         let buttons = [];
@@ -142,6 +181,7 @@
     }
 
     init();
+    animate();
 
     function setupSelectAndZoom(camera, container, controls, buttons, renderer) {
         const selection = [];
