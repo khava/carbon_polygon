@@ -11,10 +11,23 @@ function init() {
 
     camera.position.set(-82, 68, 76);
     camera.lookAt(scene.position);
-    
+
     const controls = new THREE.OrbitControls(camera, container);
+    // controls.enablePan = false;
     controls.maxDistance = 250
-    controls.maxPolarAngle = 1.2;
+    controls.maxPolarAngle = 1;
+
+    let minPan = new THREE.Vector3(-30, 5, -50);
+    let maxPan = new THREE.Vector3(20, 20, 20);
+    let currentPanTarget = new THREE.Vector3();
+    
+    controls.addEventListener("change", function() {
+        currentPanTarget.copy(controls.target);
+        controls.target.clamp(minPan, maxPan);
+        currentPanTarget.sub(controls.target);
+        camera.position.sub(currentPanTarget);
+    })
+
     controls.update();
 
     const lights = createLights();
@@ -58,7 +71,7 @@ function init() {
 
         //Reposition to 0,halfY,0
         mroot.position.copy(cent).multiplyScalar(-1);
-        console.log(mroot.position.y, size.y, size.y * 0.09)
+        // mroot.position.y -= (size.y * 0.5);
         mroot.position.y = 0;
         scene.add(gltf.scene);
 
@@ -83,7 +96,7 @@ function makeButton(name, x, y, z, rotateY=0) {
     let height = 7;
 
     let texture = new THREE.TextureLoader().load('../../static/img/dot.png');
-    let animator = new TextureAnimator(texture, 8, 1, 8, 75);
+    let animator = new TextureAnimator(texture, 8, 1, 8, 70);
 
     let geometry = new THREE.CircleGeometry(width, height);
     geometry.rotateX(30);
@@ -127,7 +140,8 @@ function TextureAnimator(texture, tilesHoriz, tilesVert, numTiles, tileDispDurat
                 this.currentTile = 0;
 
             let currentColumn = this.currentTile % this.tilesHorizontal;
-            texture.offset.x = currentColumn / this.tilesHorizontal;
+            texture.offset.x = currentColumn / this.tilesHorizontal - 0.005;
+
             let currentRow = Math.floor( this.currentTile / this.tilesHorizontal );
             texture.offset.y = currentRow / this.tilesVertical;
         }
