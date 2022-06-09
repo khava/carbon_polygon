@@ -5,4 +5,5 @@ from carbon_polygon import views
 
 urlpatterns = [
     path('', views.main_view, name='main'),
+    path('carbon/', views.carbon_view, name='carbon'),
 ]

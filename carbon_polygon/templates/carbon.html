@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/build/three.min.js"></script> -->
+<script src="https://threejs.org/build/three.js"></script>
+<script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://threejs.org/examples/js/controls/DragControls.js"></script>
+
+<div id="scene"></div>
+{% include "modals.html" %}
+
+<script src="../../static/js/carbon_polygon_scene.js"></script>
+
+{% endblock %}
