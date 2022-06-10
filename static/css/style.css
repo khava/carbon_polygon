@@ -39,3 +39,9 @@ body {
 .captions .item.y2023 {
     background-color: #c5e06b;
 }
+
+.popup {
+    padding: 5px 7px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+}

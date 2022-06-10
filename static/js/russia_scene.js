@@ -28,8 +28,23 @@ function init() {
 
     setupOnWindowResize(camera, container, renderer);
 
+    const popupRenderer = new THREE.CSS2DRenderer();
+    popupRenderer.setSize(innerWidth, innerHeight);
+    popupRenderer.domElement.style.position = 'absolute';
+    popupRenderer.domElement.style.top = '0px';
+    popupRenderer.domElement.style.pointerEvents = 'none';
+    document.body.appendChild(popupRenderer.domElement);
+
+    const popupDiv = document.createElement('div');
+    popupDiv.className = 'popup';
+    popupDiv.style.marginTop = '-1em';
+    const popup = new THREE.CSS2DObject(popupDiv);
+    popup.visible = false;
+    scene.add(popup);
+
     renderer.setAnimationLoop(() => {
         renderer.render(scene, camera);
+        popupRenderer.render(scene, camera);
     });
 
     let loader = new THREE.GLTFLoader();
@@ -53,7 +68,7 @@ function init() {
 
     });
 
-    setupSelectAndZoom(camera, container, buttons, renderer);
+    setupSelectAndZoom(camera, container, buttons, renderer, popup, popupDiv);
 };
 
 function animate() {
@@ -131,7 +146,7 @@ function setupOnWindowResize(camera, container, renderer) {
 init();
 animate();
 
-function setupSelectAndZoom(camera, container, buttons, renderer) {
+function setupSelectAndZoom(camera, container, buttons, renderer, popup, popupDiv) {
     const selection = [];
 
     let isDragging = false;
@@ -140,6 +155,32 @@ function setupSelectAndZoom(camera, container, buttons, renderer) {
 
     container.addEventListener("mousedown", () => { isDragging = false; }, false);
     container.addEventListener("mousemove", () => { isDragging = true; }, false);
+
+    window.addEventListener("mousemove", (event) => {
+        let rect = renderer.domElement.getBoundingClientRect();
+
+        mouse.x = ((event.clientX - rect.left) / (rect.width - rect.left)) * 2 - 1;
+        mouse.y = - ((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(buttons);
+        
+        if (intersects.length > 0) {
+            let [intersect] = intersects;
+
+            popup.visible = true;
+            popupDiv.textContent = carbonPolygonInfo[intersect.object.name]['title'];
+            
+            const offset = new THREE.Vector3();
+            new THREE.Box3().setFromObject(intersect.object).getSize(offset);
+
+            popup.position.set(intersect.object.position.x, intersect.object.position.y, intersect.object.position.z + 60);
+
+        } else {
+            popup.visible = false;
+            popupDiv.textContent = '';
+        }
+
+    }, false);
 
     window.addEventListener("mouseup", (event) => {
         if (isDragging) {
