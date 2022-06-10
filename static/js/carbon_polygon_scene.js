@@ -17,6 +17,7 @@ function init() {
     controls.maxDistance = 250
     controls.maxPolarAngle = 1;
 
+    // Ограничение перетаскивания сцены
     let minPan = new THREE.Vector3(-30, 5, -50);
     let maxPan = new THREE.Vector3(20, 20, 20);
     let currentPanTarget = new THREE.Vector3();
@@ -163,7 +164,7 @@ function createButtons() {
 function createLights() {
     const ambient = new THREE.AmbientLight(0xFFFFFF, 0.8);
 
-    const dirLight = new THREE.DirectionalLight(0xFFFFFF, 1);
+    const dirLight = new THREE.DirectionalLight(0xFFFFFF, 1.5);
     dirLight.position.set(10, 4000, 100);
 
     return {ambient, dirLight};
