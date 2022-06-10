@@ -9,6 +9,8 @@ function init() {
     camera.lookAt(scene.position);
     
     const controls = new THREE.OrbitControls(camera, container);
+    controls.minDistance = 300;
+    controls.maxDistance = 1500;
     controls.maxPolarAngle = 1;
     // controls.enableRotate = false;
     controls.update();
@@ -162,6 +164,8 @@ function setupSelectAndZoom(camera, container, buttons, renderer) {
 
         if (intersects.length > 0) {
             console.log(intersects[0].object.name)
+
+            pinModalElement.querySelector('.modal-body .btn').style.display = 'none';
             
             if (intersects[0].object.name === 'pin1') {
                 replacePlacehoders(carbonPolygonInfo['pin1'], pinModalElement);
