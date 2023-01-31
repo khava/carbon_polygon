@@ -1,11 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!-- <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/build/three.min.js"></script> -->
-<script src="https://threejs.org/build/three.js"></script>
+<!-- <script src="https://threejs.org/build/three.js"></script>
 <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
-<script src="https://threejs.org/examples/js/renderers/CSS2DRenderer.js"></script>
+<script src="https://threejs.org/examples/js/renderers/CSS2DRenderer.js"></script> -->
+
+<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.141.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.141.0/examples/jsm/"
+        }
+    }
+</script>
 
 <div class="captions">
     <div class="item y2021"><nobr>Запущены в 2021 г.</nobr></div>
@@ -17,6 +27,6 @@
 {% include "modals.html" %}
 
 <script src="../../static/js/carbon_data.js"></script>
-<script src="../../static/js/russia_scene.js"></script>
+<script type="module" src="../../static/js/russia_scene.js"></script>
 
 {% endblock %}

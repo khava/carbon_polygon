@@ -1,15 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!-- <script src="https://cdn.jsdelivr.net/npm/three@0.115.0/build/three.min.js"></script> -->
-<script src="https://threejs.org/build/three.js"></script>
-<script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
-<script src="https://threejs.org/examples/js/controls/DragControls.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/three@0.141.0/build/three.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.141.0/examples/jsm/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.141.0/examples/jsm/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.141.0/examples/jsm/controls/DragControls.js"></script> -->
+
+<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.141.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.141.0/examples/jsm/"
+        }
+    }
+</script>
 
 <div id="scene"></div>
 {% include "modals.html" %}
 
-<script src="../../static/js/carbon_polygon_scene.js"></script>
+<script type="module" src="../../static/js/carbon_polygon_scene.js"></script>
 
 {% endblock %}

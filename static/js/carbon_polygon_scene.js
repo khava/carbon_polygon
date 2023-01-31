@@ -1,3 +1,7 @@
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
 let animator1, animator2, animator3, animator4, animator5;
 let clock = new THREE.Clock();
 
@@ -12,7 +16,7 @@ function init() {
     camera.position.set(-82, 68, 76);
     camera.lookAt(scene.position);
 
-    const controls = new THREE.OrbitControls(camera, container);
+    const controls = new OrbitControls(camera, container);
     // controls.enablePan = false;
     controls.maxDistance = 250
     controls.maxPolarAngle = 1;
@@ -56,7 +60,7 @@ function init() {
         renderer.render(scene, camera);
     });
 
-    let loader = new THREE.GLTFLoader();
+    let loader = new GLTFLoader();
     loader.load('../../static/3d_model/carbon.glb', (gltf) => {
         let mroot = gltf.scene;
         let bbox = new THREE.Box3().setFromObject(mroot);

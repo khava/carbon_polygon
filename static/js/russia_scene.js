@@ -1,3 +1,8 @@
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
 function init() {
     const container = document.querySelector("#scene");
 
@@ -8,7 +13,7 @@ function init() {
     camera.position.set(-0.5, 849, 5);
     camera.lookAt(scene.position);
     
-    const controls = new THREE.OrbitControls(camera, container);
+    const controls = new OrbitControls(camera, container);
     controls.minDistance = 300;
     controls.maxDistance = 1500;
     controls.maxPolarAngle = 1;
@@ -28,7 +33,7 @@ function init() {
 
     setupOnWindowResize(camera, container, renderer);
 
-    const popupRenderer = new THREE.CSS2DRenderer();
+    const popupRenderer = new CSS2DRenderer();
     popupRenderer.setSize(innerWidth, innerHeight);
     popupRenderer.domElement.style.position = 'absolute';
     popupRenderer.domElement.style.top = '0px';
@@ -38,7 +43,7 @@ function init() {
     const popupDiv = document.createElement('div');
     popupDiv.className = 'popup';
     popupDiv.style.marginTop = '-1em';
-    const popup = new THREE.CSS2DObject(popupDiv);
+    const popup = new CSS2DObject(popupDiv);
     popup.visible = false;
     scene.add(popup);
 
@@ -47,7 +52,7 @@ function init() {
         popupRenderer.render(scene, camera);
     });
 
-    let loader = new THREE.GLTFLoader();
+    let loader = new GLTFLoader();
     loader.load('../../static/3d_model/russia.glb', (gltf) => {
         let mroot = gltf.scene;
         let bbox = new THREE.Box3().setFromObject(mroot);

@@ -71,6 +71,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'carbon_polygon.wsgi.application'
 
+X_FRAME_OPTIONS = 'ALLOWALL'
+
+XS_SHARING_ALLOWED_METHODS = ['GET','OPTIONS']
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
